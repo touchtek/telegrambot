@@ -1,3 +1,17 @@
+
+const fs = require('fs');
+const lockFile = 'bot_lock.lock';
+
+if (fs.existsSync(lockFile)) {
+    console.log('Another bot instance is already running.');
+    process.exit(1);
+} else {
+    fs.writeFileSync(lockFile, 'locked');
+}
+
+// Your bot code here
+
+
 const Telegram = require('node-telegram-bot-api');
 const token = '6561027053:AAG1eoSkMF53Dp_Wu1g7YYmLWiILlTipR8A'; // Replace with your actual bot token
 
@@ -45,4 +59,9 @@ bot.on('message', (msg) => {
 bot.onText(/\/start/, (msg) => {
     const chatId = msg.chat.id;
     bot.sendMessage(chatId, 'Welcome to the Main Menu! Please select an option:', mainKeyboard);
+});
+
+// When the bot instance exits, remove the lock
+process.on('exit', () => {
+    fs.unlinkSync(lockFile);
 });
